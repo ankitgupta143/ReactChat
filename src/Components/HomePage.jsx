@@ -8,6 +8,8 @@ import { useAuth } from "../Context/UserAuthContext";
 import q from "../assets/light_svg.svg"
 import s from "../assets/svg.svg"
 import { Tilt } from "react-tilt";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomePage = ({darkMode}) => {
 
@@ -41,11 +43,37 @@ const HomePage = ({darkMode}) => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Form Data:", formData);
+  
+    const roomRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{4,}$/;
+  
+    if (!roomRegex.test(formData.room)) {
+      if (!/(?=.*[a-z])/.test(formData.room)) {
+        toast.error('Room number must contain a lowercase letter.');
+        // console.log('Room number must contain a lowercase letter.');
+      }
+      if (!/(?=.*[A-Z])/.test(formData.room)) {
+        toast.error('Room number must contain an uppercase letter.');
+        // console.log('Room number must contain an uppercase letter.');
+      }
+      if (!/(?=.*\d)/.test(formData.room)) {
+        toast.error('Room number must contain a number.');
+        // console.log('Room number must contain a number.');
+      }
+      if (formData.room.length < 4) {
+        toast.error('Room number must be at least 4 characters long.');
+        // console.log('Room number must be at least 4 characters long.');
+      }
+      return; // Prevent further execution
+    }
+  
     localStorage.setItem("username", formData.username);
     localStorage.setItem("room", formData.room);
     setRoomDetail({ username: formData.username, room: formData.room });
+  
     navigate(`chat?username=${formData.username}&room=${formData.room}`);
   };
+
   const defaultOptions = {
     reverse:        false,  // reverse the tilt direction
     max:            100,     // max tilt rotation (degrees)
